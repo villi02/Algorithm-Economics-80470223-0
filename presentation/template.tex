@@ -225,7 +225,7 @@ Unverifiable Outcomes} % The short title in the optional parameter appears at th
 \end{frame}
 
 \begin{frame}
-	\frametitle{Definition}
+	\frametitle{Background}
 	
 	\begin{definition}[Prediction Market]
 		A prediction market is a mechanism that allows people to bet on the outcome of an event.
@@ -238,12 +238,18 @@ Unverifiable Outcomes} % The short title in the optional parameter appears at th
 			\item Sport betting
 		\end{itemize}
 	\end{example}
-	
+
+	\begin{definition}[Cross-Entropy Market Scoring Rule (CE-MSR)]
+		Given agent $t$'s report $q_t$ and the previous market report $q_{t-1}$, and the re, the CE-MSR is defined as:
+		$$
+		S_{CEM}(q^t, q^{t-1}, r) = -H(r, q^t) + H(r, q^{t-1}) = \sum_{i=1}^Y r_i \log \frac{q^t_i}{q^{t-1}_i}
+		$$
+	\end{definition}
 \end{frame}
 
 \section{Motivation and Problem Setup}
 \begin{frame}
-	\frametitle{Motivation}
+	\frametitle{Motivation and Problem Setup}
 
 	\begin{itemize}
 		\setlength{\itemsep}{1.5em} % space between the main bullets
@@ -261,7 +267,7 @@ Unverifiable Outcomes} % The short title in the optional parameter appears at th
 \end{frame}
 
 \begin{frame}
-	\frametitle{Motivation}
+	\frametitle{Motivation and Problem Setup}
 	
 	\begin{block}{Key Idea}
 		Can we replace the verifiable outcome with a reference agent that has more information about the outcome?
@@ -269,20 +275,29 @@ Unverifiable Outcomes} % The short title in the optional parameter appears at th
 \end{frame}
 
 \begin{frame}
-	\frametitle{Problem Setup}
+	\frametitle{The Self-Resolving Prediction Market Mechanism}
 	
 	\begin{itemize}
-		\setlength{\itemsep}{1.5em} % space between the main bullets
-		\item Can we replace the verifiable outcome with a reference agent that has more information about the outcome?
+		\item Consider a prediction market for a binary outcome $Y \in \{0,1\}$ with a common prior $\pi$.
+		\item $M$ agents arrive in sequence.
+		\item Each agent has a private signal $s_i \in [0,1]$ that is conditionally independent of the others given $Y$.
+		\item Each agent sees the previous market report plus its own signal, forms a belief, and reports it.
+		\item The market terminates with probability $\alpha$ after each report; the terminal agent is the reference.
+		\item Agents $1..T-k$ are paid the cross-entropy market scoring rule against the reference, and the last $k$ agents receive a flat fee $R$.
 	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Self-Resolving Prediction Market Mechanism}
+	\begin{figure}
+		\includegraphics[width=0.8\linewidth]{Images/srpm_mechanism.png}
+		\caption{The Self-Resolving Prediction Market Mechanism.}
+	\end{figure}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Problem Setup}
 	
-	\begin{definition}[Prediction Market]
-		A prediction market is a mechanism that allows people to bet on the outcome of an event.
-	\end{definition}
 
 \end{frame}
 

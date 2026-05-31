@@ -224,29 +224,6 @@ Unverifiable Outcomes} % The short title in the optional parameter appears at th
 	
 \end{frame}
 
-\begin{frame}
-	\frametitle{Background}
-	
-	\begin{definition}[Prediction Market]
-		A prediction market is a mechanism that allows people to bet on the outcome of an event.
-	\end{definition}
-
-	\begin{example}
-		\begin{itemize}
-			\item Polymarket
-			\item The stock market
-			\item Sport betting
-		\end{itemize}
-	\end{example}
-
-	\begin{definition}[Cross-Entropy Market Scoring Rule (CE-MSR)]
-		Given agent $t$'s report $q_t$ and the previous market report $q_{t-1}$, and the re, the CE-MSR is defined as:
-		$$
-		S_{CEM}(q^t, q^{t-1}, r) = -H(r, q^t) + H(r, q^{t-1}) = \sum_{i=1}^Y r_i \log \frac{q^t_i}{q^{t-1}_i}
-		$$
-	\end{definition}
-\end{frame}
-
 \section{Motivation and Problem Setup}
 \begin{frame}
 	\frametitle{Motivation and Problem Setup}
@@ -274,6 +251,81 @@ Unverifiable Outcomes} % The short title in the optional parameter appears at th
 	\end{block}
 \end{frame}
 
+\section{Background}
+
+\begin{frame}
+	\frametitle{What is a Prediction Market?}
+	
+	\begin{definition}[What is a Prediction Market]
+		A prediction market is a mechanism that allows people to bet on the outcome of an event.
+	\end{definition}
+
+	\begin{example}
+		\begin{itemize}
+			\item Polymarket
+			\item The stock market
+			\item Sport betting
+		\end{itemize}
+	\end{example}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Background: Scoring Rules}
+
+	\begin{block}{Idea}
+		A \alert{(proper) scoring rule} pays an agent for a probabilistic
+		prediction so that reporting their \emph{true belief} maximizes their
+		expected payoff.
+	\end{block}
+
+	\vspace{0.5em}
+	\begin{itemize}
+		\item \alert{Problem:} this requires observing the outcome $i$.
+	\end{itemize}
+
+	\begin{definition}[Cross-Entropy Scoring Rule]
+		Score a report $q$ against a \alert{reference prediction}
+		$r \in \Delta\Omega_Y$ instead of an outcome:
+		$$
+		S_{CE}(r, q) = -H(r, q) = \sum_{i=1}^{Y} r_i \log q_i .
+		$$
+	\end{definition}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Background: The Key Swap}
+
+	\begin{columns}[t]
+		\begin{column}{0.48\textwidth}
+			\begin{block}{Standard scoring rule}
+				\centering
+				prediction \quad vs. \quad \alert{outcome}
+				\vspace{0.5em}
+				$$ S(i, q) = \log q_i $$
+				\vspace{0.3em}
+				\emph{Needs the truth to be revealed.}
+			\end{block}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\begin{block}{Cross-entropy scoring rule}
+				\centering
+				prediction \quad vs. \quad \alert{reference}
+				\vspace{0.5em}
+				$$ S_{CE}(r, q) = \sum_i r_i \log q_i $$
+				\vspace{0.3em}
+				\emph{Needs a reference prediction $r$.}
+			\end{block}
+		\end{column}
+	\end{columns}
+
+	\vspace{1em}
+	\centering
+	\small This swap is what lets the market resolve \emph{without an outcome}.
+\end{frame}
+
+
 \begin{frame}
 	\frametitle{The Self-Resolving Prediction Market Mechanism}
 	
@@ -296,18 +348,234 @@ Unverifiable Outcomes} % The short title in the optional parameter appears at th
 \end{frame}
 
 \begin{frame}
-	\frametitle{Problem Setup}
-	
+	\frametitle{Scoring rule in mechanism}
+	\begin{itemize}
+		\item The scoring rule in the mechanism is the CE-MSR.
+		\item The scoring rule is defined as:
+		$$
+		S_{CEM}(q^t, q^{t-1}, r) = -H(r, q^t) + H(r, q^{t-1}) = \sum_{i=1}^Y r_i \log \frac{q^t_i}{q^{t-1}_i}
+		$$
+		\item Intuition: how much better is the new report than the previous one, compared to the reference?
+	\end{itemize}
 
 \end{frame}
 
 \section{Limitations and Proposed Research Questions}
 \begin{frame}
 	\frametitle{Limitations and Proposed Research Questions}
-	
-	
+
+	The paper's incentive guarantees are \emph{theoretical}: they rest on the reference being a good proxy for the truth, and the mechanism is never tested on real data.
+
+	\medskip
+	\begin{block}{RQ1 --- Simulation (incentives)}
+		Under strategic deviation, \emph{when} is truthful reporting a best response, and how does this depend on how well-informed the reference is?
+	\end{block}
+
+	\begin{block}{RQ2 --- Empirical (real markets)}
+		How closely do self-resolving payouts track the standard verifiable (outcome-based) payouts on resolved real-world markets?
+	\end{block}
 \end{frame}
 
+%------------------------------------------------
+
+\section{Experiments and Results}
+
+\subsection{Simulation Study}
+
+\begin{frame}
+	\frametitle{RQ1 Preliminaries: The Three Knobs}
+	\framesubtitle{What the simulation actually varies}
+	\small
+
+	\begin{block}{The paper's informativeness parameters (Assumption 5)}
+		\begin{itemize}
+			\item $\delta$ --- \alert{how informative} a signal is.
+			Via the Bhattacharyya coefficient, $\delta = 1-\mathrm{BC}$:
+			$\delta = 0$ means $P(X\mid Y{=}0)=P(X\mid Y{=}1)$ (useless);
+			larger $\delta$ separates the two classes.
+			\item $\eta$ --- a \alert{floor on signal probabilities},
+			$\min_{x,\omega} P(X{=}x\mid Y{=}\omega)\ge\eta$.
+			No signal is arbitrarily decisive ($\eta$ bounds how far one report can move a belief).
+		\end{itemize}
+	\end{block}
+
+	\begin{block}{Our deviation parameter (simulation construct)}
+		$\gamma$ scales the focal agent's signal: report
+		$\mathrm{logit}(\pi) + \gamma\,\ell$.
+		$\gamma=1$ truthful, $\gamma>1$ over-confident.
+	\end{block}
+
+	\centering
+	\alert{Link:} the theory bounds the \emph{gain} from any deviation
+	($D_\eta(\Delta,\mathbf{y})$, Thm.~3) and shows it $\to 0$ as $k$ grows.
+	$\gamma$ is how we \emph{realize} a deviation; $\gamma^\star\!\to\!1$ is that bound biting.
+\end{frame}
+
+\begin{frame}
+	\frametitle{RQ1 (Simulation): Is Truthful Reporting a Best Response?}
+
+	\textbf{Setup --- an agent-based simulator of the mechanism}
+	\begin{itemize}
+		\item Binary $Y$, conditionally independent signals, payment via CE-MSR against the terminal \emph{reference} agent.
+		\item A focal agent deviates by scaling its signal: it reports $\mathrm{logit}(\pi) + \gamma\,\ell$, where $\ell$ is its log-likelihood ratio. $\gamma=1$ is truthful, $\gamma>1$ over-confident.
+		\item The reference observes the focal report \emph{plus} $k$ independent signals (its informational substitutes).
+		\item Sweep $k \in \{0,2,8,32,64,128,256\}$ and estimate the profit-maximising $\gamma^\star$ by Monte Carlo ($4\times 10^5$ samples).
+	\end{itemize}
+
+	\begin{block}{Hypothesis}
+		Few substitutes $\Rightarrow$ it pays to over-report ($\gamma^\star>1$); as $k$ grows the reference $\approx$ ground truth, so $\gamma^\star \to 1$ (truthful).
+	\end{block}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{RQ1 Results: Truthfulness Needs an Informed Reference}
+
+	\begin{columns}[c]
+		\begin{column}{0.62\textwidth}
+			\begin{figure}
+				\includegraphics[width=\linewidth]{Images/sim_incentives.png}
+			\end{figure}
+		\end{column}
+		\begin{column}{0.38\textwidth}
+			\begin{itemize}
+				\item $k \le 8$: best response is to grossly over-report ($\gamma^\star = 3$).
+				\item $k = 32$: $\gamma^\star \approx 1.2$.
+				\item $k \ge 64$: $\gamma^\star = 1.0$ --- \alert{exactly truthful}.
+			\end{itemize}
+			\medskip
+			Matches Theorems 1--3: truthfulness emerges once the reference has enough informational substitutes.
+		\end{column}
+	\end{columns}
+
+	\smallskip
+	{\footnotesize Aside: under truthful play the market reproduces the full-information Bayesian posterior (gap $\sim 10^{-13}$).}
+\end{frame}
+
+%------------------------------------------------
+
+\subsection{Empirical Study}
+
+\begin{frame}
+	\frametitle{RQ2 (Empirical): Counterfactual on Real Polymarket Data}
+
+	\textbf{Data \& method} --- $\sim$90 resolved markets (volume $> \$100$k).
+	\begin{itemize}
+		\item Treat the Yes-price path as sequential reports $q^{(t)}=[1-p_t,\,p_t]$; each price move is a ``reporter''.
+		\item Pay the \emph{same} transitions two ways:
+		\begin{itemize}
+			\item \textbf{Self-resolving}: CE-MSR against a late reference price $r$ (no outcome needed).
+			\item \textbf{Verifiable}: log-MSR against the realised outcome $Y$.
+		\end{itemize}
+		\item Sweep how ``late'' $r$ is: \texttt{lead\_1h/24h/168h} (before close), \texttt{life\_50pct} (halfway through the market's life), \texttt{window\_1-24h} (averaged late window).
+		\item Compare payout correlation, top-decile reporter overlap, and total payout ratio.
+	\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{RQ2 Results: Payouts Track; Leakage Drives the Gap}
+
+	\begin{columns}[c]
+		\begin{column}{0.55\textwidth}
+			\begin{figure}
+				\includegraphics[width=\linewidth]{Images/emp_reference_sweep.png}
+			\end{figure}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\scriptsize
+			\setlength{\tabcolsep}{3.5pt}
+			\begin{tabular}{lccc}
+				\toprule
+				ref. & Pears. & Spear. & ratio \\
+				\midrule
+				lead\_1h    & 1.00 & 1.00 & 0.98 \\
+				lead\_24h   & 1.00 & 1.00 & 0.95 \\
+				lead\_168h  & 1.00 & 0.99 & 0.85 \\
+				life\_50pct & 0.95 & 0.58 & 0.56 \\
+				window      & 1.00 & 1.00 & 0.96 \\
+				\bottomrule
+			\end{tabular}
+
+			\smallskip
+			\textbf{Pearson}: do payout \emph{amounts} agree?\\
+			\textbf{Spearman}: does the \emph{ranking} (who earns most) agree?
+
+			\smallskip
+			Amounts track almost perfectly; ranking degrades as $r$ moves earlier --- that gap is outcome leakage.
+		\end{column}
+	\end{columns}
+
+	\smallskip
+	{\footnotesize Measures whether the \emph{outputs} match (not incentive compatibility) --- complementary to RQ1.}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{RQ2: Worked Example --- Kamala Harris Popular-Vote Market}
+
+	\begin{columns}[c]
+		\begin{column}{0.64\textwidth}
+			\begin{figure}
+				\includegraphics[width=\linewidth]{Images/emp_example_kamala.png}
+			\end{figure}
+		\end{column}
+		\begin{column}{0.36\textwidth}
+			\footnotesize
+			A high-volume market ($\sim$2{,}700 price moves, outcome $Y=0$).
+			\smallskip
+
+			The self-resolving payouts (CE-MSR vs.\ the 24h reference) and the verifiable payouts (vs.\ the outcome) are \alert{visually indistinguishable}.
+			\medskip
+
+			\centering
+			\begin{tabular}{lc}
+				\toprule
+				Pearson & $1.00$ \\
+				Spearman & $1.00$ \\
+				payout ratio & $0.99$ \\
+				\midrule
+				self total & $0.68$ \\
+				verifiable total & $0.69$ \\
+				\bottomrule
+			\end{tabular}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{RQ2: Per-Market Agreement (High-Volume Markets)}
+
+	Pearson / Spearman of per-reporter payouts at a \emph{late} reference (24h before close) vs.\ a \emph{mid-life} reference (halfway through the market):
+
+	\medskip
+	\begin{table}
+		\centering
+		\footnotesize
+		\setlength{\tabcolsep}{6pt}
+		\begin{tabular}{lccccc}
+			\toprule
+			& & \multicolumn{2}{c}{late (24h)} & \multicolumn{2}{c}{mid-life (50\%)} \\
+			\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+			Market & \#rep & P & S & P & S \\
+			\midrule
+			Kamala popular vote        & 2681 & 1.00 & 1.00 & 1.00 & 0.45 \\
+			Poilievre next Canadian PM & 1030 & 1.00 & 1.00 & 0.96 & 0.91 \\
+			Russia--Ukraine ceasefire '25 & 2531 & 1.00 & 1.00 & 0.99 & 0.98 \\
+			US government shutdown     &  778 & 1.00 & 1.00 & 0.41 & $-0.48$ \\
+			TikTok ban (May '25)       & 1078 & 1.00 & 1.00 & $-0.37$ & $-0.54$ \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+
+	\medskip
+	{\footnotesize At a genuinely \emph{late} reference every market tracks perfectly. At \emph{mid-life}, some still track (ceasefire, Poilievre) while others collapse (shutdown, TikTok) --- the more the late price already leaks the outcome, the larger the gap.}
+\end{frame}
 
 %------------------------------------------------
 

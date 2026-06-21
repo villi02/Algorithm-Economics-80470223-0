@@ -36,7 +36,7 @@ python experiments/exp_strategies.py
 python experiments/exp_incentives.py
 ```
 
-## The knobs you asked for
+## The different knobs available
 
 | Want to change… | How |
 | --- | --- |
@@ -118,7 +118,7 @@ empirical/        real-Polymarket counterfactual study (reuses srpm.scoring)
 
 ## Empirical study on real Polymarket data (`empirical/`)
 
-The `empirical/` subpackage implements **Option 1** of the empirical plan: rather
+The `empirical/` subpackage runs a counterfactual study on real data: rather
 than simulate agents, it treats a *resolved* Polymarket market's price time series
 as a stream of sequential reports and asks **how closely the self-resolving
 mechanism's payouts would have tracked the verifiable (outcome-based) mechanism's

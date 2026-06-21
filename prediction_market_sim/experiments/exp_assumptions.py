@@ -5,21 +5,22 @@ varies A5. This experiment violates ONE assumption at a time, holding everything
 fixed, and watches the market's terminal *reference* drift from the ideal
 full-information posterior. That gap (``mean_abs_gap_to_full_info``) is the quantity the
 whole self-resolving idea depends on: if the reference is a good proxy for the truth the
-gap is ~0, and resolution behaves like the verifiable mechanism.
+gap is ~0 and the reference matches the ideal full-information posterior. (We measure the
+aggregation gap and accuracy here, not payout agreement -- that is RQ2's question.)
 
 Both knobs are calibrated so that the *baseline* value recovers the assumption:
 
-* **A1 (rationality).** Every agent is a *boundedly rational* Bayesian: it adds zero-mean
-  Gaussian noise of scale ``sigma`` (in log-odds) to its truthful report. ``sigma = 0``
-  is the fully rational baseline. Because reports are cumulative, per-agent errors are
-  not averaged away -- they random-walk into the terminal reference, so the gap grows
-  with ``sigma`` (and with the number of agents).
+* **A1 (Bayesian-rationality component).** Every agent is a *boundedly rational* Bayesian:
+  it adds zero-mean Gaussian noise of scale ``sigma`` (in log-odds) to its truthful report.
+  This perturbs the Bayesian-rationality part of A1, not risk neutrality. ``sigma = 0`` is
+  the exact-Bayesian baseline. In this cumulative reporting model per-agent errors are not
+  averaged away but random-walk into the terminal reference, so the gap grows with ``sigma``.
 
-* **A2 (common prior).** The world draws ``Y`` under the true prior, but the market
-  anchors on a *mis-specified* common prior. We sweep the logit-disagreement ``d``
-  between the assumed and the true prior; ``d = 0`` is the correct-prior baseline. A
-  wrong prior shifts the terminal log-odds by a constant, biasing the aggregate -- most
-  where the signals are too weak to overrule it.
+* **A2 (common prior).** The world draws ``Y`` under the true prior, but the market anchors
+  on a *mis-specified* common prior. Agents still share a single common prior; it simply
+  disagrees with the data-generating prior by a logit gap ``d`` (so ``d = 0`` is the
+  correct-prior baseline). A wrong prior shifts the terminal log-odds by a constant, biasing
+  the aggregate, most where the signals are too weak to overrule it.
 
 This is a deliberately cheap prototype (it reuses ``SelfResolvingMarket`` +
 ``aggregation_stats`` with no changes to the core), to see whether the single-assumption
@@ -45,6 +46,7 @@ from srpm import (
     logit,
 )
 
+SEED = 11
 N_RUNS = 8000
 PRIOR = 0.5
 N = 8
@@ -116,17 +118,19 @@ def _panel(ax, xs, gaps, accs, xlabel, title):
 
 
 def main() -> None:
-    rng = np.random.default_rng(11)
-    a1 = sweep_a1(rng)
-    a2 = sweep_a2(rng)
+    # Independent RNG streams per sweep (decoupled but reproducible from one seed), so the
+    # A2 numbers do not depend on how many draws A1 happened to consume.
+    rng_a1, rng_a2 = np.random.default_rng(SEED).spawn(2)
+    a1 = sweep_a1(rng_a1)
+    a2 = sweep_a2(rng_a2)
     rows = a1 + a2
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4.5))
     _panel(ax1, A1_SIGMAS, [r[5] for r in a1], [r[3] for r in a1],
-           "noise scale sigma (0 = fully rational)",
+           r"per-agent report noise $\sigma$ (0 = exact Bayesian)",
            "A1: bounded rationality")
     _panel(ax2, A2_DISAGREEMENTS, [r[5] for r in a2], [r[3] for r in a2],
-           "prior disagreement d (0 = common prior)",
+           r"prior misspecification $d$ (0 = correct prior)",
            "A2: mis-specified common prior")
 
     save_fig(fig, "exp_assumptions.png")

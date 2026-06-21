@@ -72,6 +72,7 @@ the paper, use this table to jump straight to what produced each result.
 | Exact aggregation under truthful play | `experiments/exp_aggregation.py` | `results/exp_aggregation.{png,csv}` |
 | Table — value of near-oracle references | `experiments/exp_ground_truth.py` | `results/exp_ground_truth*.csv` |
 | Table — mixed / strategic populations | `experiments/exp_strategies.py` | `results/exp_strategies.{png,csv}` |
+| Breaking assumptions A1/A2 (rationality, common prior) | `experiments/exp_assumptions.py` | `results/exp_assumptions.{png,csv}` |
 | **RQ2** reference sweep | `empirical/run_empirical.py` | `empirical/results/reference_sweep.csv`, `fig_reference_sweep.png` |
 | **RQ2** relative-time sweep | `empirical/run_fraction_sweep.py` | `empirical/results/fraction_sweep.csv`, `fig_fraction_sweep.png` |
 | **RQ2** worked example (Kamala market) | `empirical/run_empirical.py` | `empirical/results/fig_example_*.png` |
@@ -100,6 +101,7 @@ python3 experiments/exp_kmin.py                       # analytic k_min bound
 python3 experiments/exp_aggregation.py               # exact aggregation
 python3 experiments/exp_ground_truth.py              # value of an informed reference
 python3 experiments/exp_strategies.py                # mixed/strategic populations
+python3 experiments/exp_assumptions.py               # break A1/A2 (rationality, common prior)
 ```
 
 Figures and CSVs land in `prediction_market_sim/results/`.

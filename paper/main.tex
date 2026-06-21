@@ -1,0 +1,46 @@
+% Algorithm Economics (80470223-0) --- Course Project
+% Template by Jon Arnt Kårstad, NTNU IMT (adapted)
+\documentclass{article}
+
+% Importing document settings from our file "packages.sty"
+\usepackage{packages}
+
+% Beginning of document
+\begin{document}
+
+% Inserting title page
+\import{./}{title}
+
+% Defining front matter settings
+\frontmatter
+
+% Inserting table of contents
+\tableofcontents
+
+% Inserting list of figures & list of tables
+\listoffigures
+\listoftables
+
+% Defining main matter settings
+\mainmatter
+
+\input{Sections/abstract}
+
+\input{Sections/Introduction}
+
+\input{Sections/RelatedWork}
+
+\input{Sections/Preliminaries}
+
+\input{Sections/Methods}
+
+\input{Sections/Experiments}
+
+\input{Sections/Conclusion}
+
+% Printing bibliography
+\newpage
+\printbibliography[heading = bibintoc, title = Bibliography]
+
+% End of document
+\end{document}

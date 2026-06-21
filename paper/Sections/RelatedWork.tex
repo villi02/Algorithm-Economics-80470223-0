@@ -1,0 +1,63 @@
+\section{Related Work}
+\label{sec:related}
+
+The mechanism studied here sits at the intersection of three literatures, following
+the framing of \textcite{srinivasan2025selfresolving}. We summarise each and place
+our own contribution --- an \emph{empirical} evaluation --- relative to them.
+
+\paragraph{Aumann's agreement theorem and information aggregation.}
+\textcite{aumann1976agreeing} showed that two Bayesians with a common prior cannot
+``agree to disagree'': common knowledge of their posteriors forces those posteriors
+to coincide. Subsequent work extended this to repeated belief exchange among many
+agents, who must eventually reach consensus. \textcite{chen2016informational} and
+\textcite{kong2022aggregation} sharpen this further: when agents' signals are
+\emph{informational substitutes} --- conditionally independent given the outcome, so
+each additional signal has diminishing marginal value --- the eventual consensus does
+not merely agree but \emph{aggregates} all of the agents' private information. This
+line of work tells us \emph{how} honest Bayesians pool information, but it assumes
+honesty; it does not ask how to \emph{incentivise} agents to reveal their true
+signal in the first place. The self-resolving market can be read as supplying exactly
+those incentives on top of the Aumannian protocol.
+
+\paragraph{Prediction markets and (market) scoring rules.}
+When the designer eventually observes the ground truth, truthful elicitation is a
+solved problem: \emph{proper scoring rules} reward reports that match the realised
+outcome and make honesty optimal~\parencite{brier1950verification,good1952rational,gneiting2007strictly}.
+\textcite{hanson2003combinatorial} extended scoring rules into \emph{market scoring
+rules} (MSRs), which let a sequence of agents each update a shared forecast and be
+paid for how much they \emph{improve} it; \textcite{chen2012designing} relate this
+cost-function view of automated market makers to the scoring-rule view, and
+\textcite{chen2010gaming} analyse the equilibrium strategies such markets induce.
+All of these mechanisms, however, ultimately pay out against an observed outcome.
+The self-resolving market keeps the MSR machinery --- in fact a cross-entropy MSR ---
+but swaps the outcome for a reference agent's report, which is the move we test
+empirically.
+
+\paragraph{Information elicitation without verification (peer prediction).}
+The peer-prediction literature confronts the no-ground-truth case directly.
+\textcite{miller2005eliciting} pay an agent based on how well their report predicts a
+peer's report; the Bayesian truth serum of \textcite{prelec2004bayesian} scores
+reports against the population's predicted distribution; and output-agreement
+mechanisms~\parencite{waggoner2014output} reward matching a reference agent.
+Information-theoretic designs~\parencite{kong2019information} unify many of these and
+make truth-telling reward-maximising. The recurring difficulties in this literature
+are (i) \emph{aggregation} --- most mechanisms elicit from a handful of agents rather
+than distilling a large pool into one forecast --- and (ii) \emph{uninformative
+equilibria}, in which everyone reports the same prior-based answer and still gets
+paid. The self-resolving market is best understood as a peer-prediction mechanism
+engineered, via informational smallness, to also aggregate efficiently and to pay
+(close to) zero in uninformative equilibria.
+
+\paragraph{Where this project fits.}
+\textcite{srinivasan2025selfresolving} prove that, under their assumptions, truthful
+reporting is a strict perfect Bayesian equilibrium, and that the gain from any
+deviation vanishes as the reference accumulates informational substitutes. What they
+do \emph{not} provide is any empirical or simulation evidence: the mechanism is
+analysed but never instantiated. Empirical evaluation of related elicitation
+mechanisms has historically been limited and mixed, often hinging on design details
+such as the presence of uninformative or effortless agents. Our contribution is to
+fill this gap for the self-resolving market specifically: we reproduce the mechanism
+in simulation to check \emph{whether the incentive story actually plays out} when an
+agent is free to deviate, and we run a counterfactual on real prediction-market data
+to check \emph{whether the reference-based payouts track the outcome-based payouts}
+they are meant to replace.

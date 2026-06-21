@@ -49,6 +49,9 @@ pip-wheel-metadata/
 *.swo
 *~
 
+# Cached Polymarket API responses (regenerable; can be large)
+prediction_market_sim/empirical/cache/
+
 # LaTeX build artifacts
 *.aux
 *.bbl

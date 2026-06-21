@@ -1,0 +1,6 @@
+reference,n_markets,median_pearson,median_spearman,median_top_decile_jaccard,median_payout_ratio,argmax_match_rate
+lead_1h,91,0.9999,0.9995,1.0,0.9781,0.956
+lead_24h,91,0.9997,0.997,1.0,0.9529,0.9231
+lead_168h,91,0.9984,0.9878,0.9259,0.8471,0.8132
+life_50pct,91,0.9536,0.5808,0.5556,0.5589,0.7802
+window_1-24h,91,0.9998,0.9968,1.0,0.9566,0.9231

@@ -29,11 +29,13 @@ pip install -r requirements.txt
 # minimal end-to-end example
 PYTHONPATH=. python examples/quickstart.py
 
-# the four bundled experiments (figures + CSVs land in results/)
+# the bundled experiments (figures + CSVs land in results/)
 python experiments/exp_aggregation.py
 python experiments/exp_ground_truth.py
 python experiments/exp_strategies.py
 python experiments/exp_incentives.py
+python experiments/exp_kmin.py
+python experiments/exp_assumptions.py
 ```
 
 ## The different knobs available
@@ -105,7 +107,7 @@ srpm/
   market.py       SelfResolvingMarket, MarketConfig, MarketResult
   metrics.py      accuracy / Brier / log-loss / payoff aggregation
   incentives.py   peer-prediction deviation analysis (Theorems 1-3)
-experiments/      four runnable studies, each writes figures + CSV to results/
+experiments/      runnable studies, each writes figures + CSV to results/
 examples/         quickstart.py
 empirical/        real-Polymarket counterfactual study (reuses srpm.scoring)
   polymarket.py     Gamma + CLOB API client with on-disk caching
@@ -181,7 +183,7 @@ honestly: this measures whether the mechanism's **outputs track** the verifiable
 mechanism's, **not** incentive compatibility (which needs a live mechanism where
 agents can deviate).
 
-## The four bundled (synthetic) experiments
+## The bundled (synthetic) experiments
 
 1. **`exp_aggregation.py`** — market accuracy and gap to the ideal Bayesian posterior
    vs number of agents and signal quality. Confirms exact aggregation under truthful play.
@@ -192,3 +194,8 @@ agents can deviate).
 4. **`exp_incentives.py`** — a focal agent's best-response deviation `gamma` as a function
    of the reference's number of informational substitutes `k`; reproduces the
    truthfulness result (`gamma* → 1` as `k` grows).
+5. **`exp_kmin.py`** — the analytic minimum-substitutes bound `k_min` (paper Figure 2),
+   reproduced by chaining the paper's Theorems 1 and 5 with Remark 3.
+6. **`exp_assumptions.py`** — single-assumption stress tests: breaks A1 (bounded
+   rationality) and A2 (a mis-specified common prior) one at a time and tracks how far the
+   terminal reference drifts from the ideal full-information posterior.

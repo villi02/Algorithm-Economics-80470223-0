@@ -54,23 +54,26 @@ The guarantees rest on five assumptions, and our studies are organised around wh
 hold: \textbf{(A1)} agents are risk-neutral, fully rational Bayesians, common knowledge;
 \textbf{(A2)} signals and outcome share a common prior; \textbf{(A3)} each signal induces a
 \emph{unique} posterior, so reports can be inverted (distinct signals); \textbf{(A4)}
-signals are conditionally independent given $Y$, informational
-substitutes~\parencite{chen2016informational}, the same class under which standard markets
-are incentive-compatible~\parencite{chen2010gaming}; \textbf{(A5)} signals are
+signals are conditionally independent given $Y$, a sufficient form of informational
+substitutes~\parencite{chen2016informational}, the structure under which standard markets
+reward prompt truthful revelation~\parencite{chen2010gaming}; \textbf{(A5)} signals are
 $(\delta,\eta)$-informative: $\delta$ lower-bounds how much each signal separates $Y{=}0$
 from $Y{=}1$ (via the Bhattacharyya coefficient $BC = 1-\delta$), and $\eta$ lower-bounds
 signal likelihoods so no single report is arbitrarily decisive.
 
 \paragraph{What the paper proves.}
-Three results express one idea: \emph{a well-informed reference makes honesty optimal}.
+The mechanism is paid by the cross-entropy \emph{market} scoring rule, whose guarantees
+express one idea: \emph{a well-informed reference makes honesty optimal} (Theorems~2--3 are
+the analogues for the non-market scoring rule).
 \emph{Theorem 1:} a focal agent's influence on the reference posterior, the adjustment
 $\Delta$, shrinks geometrically,
 $|\Delta| \le \tfrac14(\tfrac{1-\eta}{\eta}-\tfrac{\eta}{1-\eta})(1-\delta)^k$.
-\emph{Theorem 2:} paid by CE-MSR against a truthful reference, agent $t$ strictly maximises
+\emph{Theorem 4:} paid by the CE-MSR against a truthful reference, agent $t$ strictly maximises
 payoff by reporting truthfully once the reference has at least an explicit threshold number
-of signals. \emph{Theorem 3:} the gain from any deviation is bounded by
-$\hat D_\eta(\Delta,\mathbf{y})$, which $\to 0$ as $k$ grows (Theorem~1). Theorem~1
-motivates the analytic $k_{\min}$ we reproduce; Theorem~3 is exactly what RQ1 tests.
+of signals. \emph{Theorem 5:} the gain from any deviation is bounded by
+$\hat D_\eta(\Delta,\mathbf{y})$, which $\to 0$ as $k$ grows (Theorem~1); and truthful
+reporting is a strict perfect Bayesian equilibrium of the self-resolving market (Theorem~6).
+Theorem~1 motivates the analytic $k_{\min}$ we reproduce; Theorem~5 is exactly what RQ1 tests.
 
 \paragraph{Research questions.}
 \textbf{RQ1 (simulation):} where A1--A4 hold by construction, when does a freely deviating

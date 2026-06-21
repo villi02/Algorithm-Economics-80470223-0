@@ -3,8 +3,8 @@
 
 Prediction markets are among the most effective practical tools for aggregating
 dispersed information: by letting people bet on an event and paying them once the truth
-is revealed, they produce forecasts competitive with polls and expert
-panels~\parencite{berg2008results}. The engine underneath is a \emph{proper scoring
+is revealed, they produce forecasts competitive with
+polls~\parencite{berg2008results}. The engine underneath is a \emph{proper scoring
 rule}, which makes honest reporting reward-maximising, provided the outcome is
 eventually observed~\parencite{brier1950verification,good1952rational,gneiting2007strictly}.
 But many questions decision-makers care about are \emph{unverifiable}: the causal effect
@@ -12,16 +12,17 @@ of a policy that was actually enacted, whether a piece of content is misinformat
 long-run consequence of a choice. For these there is no future observation to pay
 against, and the standard prediction-market lever is missing.
 
-Two literatures speak to this but neither closes it. Aumann's agreement theorem and its
-descendants~\parencite{aumann1976agreeing,kong2022aggregation} show that rational
-Bayesians who share a prior and exchange beliefs must agree, and, when their signals
-are informational substitutes~\parencite{chen2016informational}, that consensus
-aggregates all of their private information; but this assumes honesty and provides no
+Two literatures speak to this but neither closes it. Aumann's agreement
+theorem~\parencite{aumann1976agreeing} shows that common knowledge of posteriors forces
+common-prior Bayesians to agree, and later work~\parencite{kong2022aggregation} shows that
+repeated belief exchange reaches that consensus and, when signals are informational
+substitutes~\parencite{chen2016informational}, aggregates all of their private information;
+but this assumes honesty and provides no
 \emph{incentive} to reveal a privately held signal. The information-elicitation-without-verification
 literature (peer prediction~\parencite{miller2005eliciting}, the Bayesian truth
 serum~\parencite{prelec2004bayesian}, output agreement~\parencite{waggoner2014output})
-provides incentives without an outcome, but it targets \emph{elicitation} from a few
-agents rather than efficient \emph{aggregation}, and is fragile to uninformative
+provides incentives without an outcome, but it targets \emph{elicitation} rather than
+efficient \emph{aggregation}, and is fragile to uninformative
 equilibria. The gap is a single mechanism that elicits truthful beliefs, aggregates
 them, and needs no outcome.
 

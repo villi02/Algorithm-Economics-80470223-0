@@ -45,6 +45,34 @@ information. The telling case is the uninformative third: the designer's cost co
 to $0.046$, the empirical counterpart of the paper's ``pays zero in uninformative
 equilibria''; over-reporting, conversely, is costly ($0.506$) without improving accuracy.
 
+\subsection{Breaking one assumption at a time: rationality and the common prior}
+
+RQ1 showed truthfulness \emph{emerging} as A5 is satisfied; here we ask the converse for two
+other assumptions, deliberately breaking A1 and A2 and tracking how far the terminal
+reference drifts from the ideal full-information posterior (Figure~\ref{fig:assumptions}).
+Both knobs recover the assumption at their baseline: at $\sigma=0$ (A1) and $d=0$ (A2) the
+gap is exactly $0$, the reference equals the ideal aggregate, and resolution behaves like the
+verifiable mechanism. The two then break differently. Under \textbf{A1}, because reports are
+cumulative, each agent's error is not averaged away but random-walks into the terminal
+reference, so the gap climbs steadily (to $0.42$ at $\sigma=3$) and accuracy falls from
+$0.71$ to $0.53$. Under \textbf{A2}, a wrong common prior injects a constant log-odds bias
+the additive mechanism never corrects; the gap grows roughly linearly (to $0.42$ at $d=3$)
+and accuracy collapses toward chance ($0.51$) once the prior overrides the weak signals.
+Neither violation is catastrophic near the baseline, so the mechanism degrades
+\emph{gracefully}, but neither self-corrects, which is the standing cost of assuming them.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\linewidth]{Images/exp_assumptions.png}
+    \caption[Single-assumption stress tests (A1, A2)]{\textbf{Breaking A1 and A2.} Gap
+    between the terminal reference and the ideal full-information posterior (red, left axis)
+    and market accuracy (blue, right axis) as each assumption is violated, all else fixed.
+    Left: bounded rationality (per-agent log-odds noise $\sigma$). Right: a mis-specified
+    common prior (logit-disagreement $d$). Both are $0$-gap at the baseline ($\sigma=0$,
+    $d=0$) and degrade monotonically.}
+    \label{fig:assumptions}
+\end{figure}
+
 \subsection{RQ2: do self-resolving payouts track verifiable payouts?}
 
 Table~\ref{tab:refsweep} reports agreement across $91$

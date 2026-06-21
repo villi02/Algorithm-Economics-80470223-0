@@ -48,7 +48,9 @@
 \newcommand{\source}[1]{\vspace{-4pt} \caption*{\hfill \footnotesize{Source: {#1}} } }   % Easily insert sources in images
 
 % --- Code ---
-\usepackage{minted} % Includes several programming languages and styles, visit --https://www.ntnu.no/wiki/display/imtsoftware/Code+in+LaTeX-- for more information and examples
+% NOTE: 'minted' was removed because it is unused and forces every build to pass
+% the -shell-escape flag (otherwise it errors out). Re-add \usepackage{minted}
+% only if you add code listings, and then compile with -shell-escape.
 
 % --- Colors ---
 \usepackage[dvipsnames]{xcolor} % Using colors in LaTeX. This package is placed here as it needs to be imported previous to the flow chart packages to ensure no errors.

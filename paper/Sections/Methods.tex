@@ -18,8 +18,9 @@ computational core that makes exact aggregation possible. The deviation family i
 $\gamma=1$ is truthful and $\gamma>1$ over-confident. \texttt{CrossEntropyMSR} implements
 \eqref{eq:cemsr}, and \texttt{SelfResolvingMarket} runs agents, terminates with probability
 $\alpha$, designates the terminal agent as reference, and applies the CE-MSR and flat fee.
-By construction this satisfies A1--A4; the only assumption we vary is A5, making the
-simulator a clean test of the mechanism's \emph{core} incentive claim rather than of its
+By construction this satisfies A1--A4; the incentive study (RQ1) then varies only A5, while
+the stress tests below deliberately break A1 and A2 one at a time, making the simulator a
+clean test of both the mechanism's \emph{core} incentive claim and its robustness to its own
 modelling assumptions.
 
 \paragraph{RQ1: profit-maximising deviation.}
@@ -49,6 +50,16 @@ vary the fraction of near-oracle agents (reliability $0.99$) in a $12$-agent mar
 \emph{(iii) mixed populations}, compare an all-truthful population against ones seeded
 with herders, noisy reporters, an uninformative third, and over-reporters, measuring
 accuracy, gap to full information, and the designer's total cost.
+
+\paragraph{Breaking one assumption at a time (A1, A2).}
+We complement RQ1 (which varies A5) by deliberately violating A1 and A2 in the same clean
+world and measuring how far the terminal reference drifts from the ideal full-information
+posterior. For \textbf{A1} (rationality), every agent is a boundedly rational Bayesian that
+adds zero-mean Gaussian noise of scale $\sigma$ (in log-odds) to its truthful report, so
+$\sigma=0$ is the rational baseline. For \textbf{A2} (common prior), the world draws $Y$
+under the true prior but the market anchors on a mis-specified prior a logit-disagreement
+$d$ away, so $d=0$ is the correct-prior baseline. Each knob recovers the assumption at its
+baseline, where the gap is $0$ by construction, and grows only as the assumption breaks.
 
 \paragraph{RQ2: Polymarket counterfactual.}
 We download roughly $90$ \emph{resolved} Polymarket markets~\parencite{polymarket} with

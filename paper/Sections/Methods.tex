@@ -52,14 +52,18 @@ with herders, noisy reporters, an uninformative third, and over-reporters, measu
 accuracy, gap to full information, and the designer's total cost.
 
 \paragraph{Breaking one assumption at a time (A1, A2).}
-We complement RQ1 (which varies A5) by deliberately violating A1 and A2 in the same clean
+We complement RQ1 (which varies A5) by breaking two further assumptions in the same clean
 world and measuring how far the terminal reference drifts from the ideal full-information
-posterior. For \textbf{A1} (rationality), every agent is a boundedly rational Bayesian that
-adds zero-mean Gaussian noise of scale $\sigma$ (in log-odds) to its truthful report, so
-$\sigma=0$ is the rational baseline. For \textbf{A2} (common prior), the world draws $Y$
-under the true prior but the market anchors on a mis-specified prior a logit-disagreement
-$d$ away, so $d=0$ is the correct-prior baseline. Each knob recovers the assumption at its
-baseline, where the gap is $0$ by construction, and grows only as the assumption breaks.
+posterior (an aggregation measure, not payout agreement). For \textbf{A1} we perturb its
+\emph{Bayesian-rationality component} (not risk neutrality): every agent adds zero-mean
+Gaussian noise of scale $\sigma$ (in log-odds) to its truthful report, so $\sigma=0$ is the
+exact-Bayesian baseline. For \textbf{A2}, the world draws $Y$ under the true prior but the
+market shares a single \emph{mis-specified} common prior a logit gap $d$ from it, so $d=0$ is
+the correct-prior baseline; the agents still agree with one another, they are just
+collectively wrong. Both sweeps use $N=8$ agents of signal quality $q=0.6$, prior $\pi=0.5$,
+and $8000$ Monte Carlo runs per point, with independent RNG streams (spawned from one seed)
+so the two are reproducible and decoupled. Each knob recovers the assumption at its baseline,
+where the gap is $0$ by construction.
 
 \paragraph{RQ2: Polymarket counterfactual.}
 We download roughly $90$ \emph{resolved} Polymarket markets~\parencite{polymarket} with

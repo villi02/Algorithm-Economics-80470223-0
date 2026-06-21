@@ -48,28 +48,35 @@ equilibria''; over-reporting, conversely, is costly ($0.506$) without improving 
 \subsection{Breaking one assumption at a time: rationality and the common prior}
 
 RQ1 showed truthfulness \emph{emerging} as A5 is satisfied; here we ask the converse for two
-other assumptions, deliberately breaking A1 and A2 and tracking how far the terminal
+other assumptions, breaking the \emph{Bayesian-rationality component} of A1 and the
+\emph{common prior} of A2 (one at a time, all else fixed) and tracking how far the terminal
 reference drifts from the ideal full-information posterior (Figure~\ref{fig:assumptions}).
-Both knobs recover the assumption at their baseline: at $\sigma=0$ (A1) and $d=0$ (A2) the
-gap is exactly $0$, the reference equals the ideal aggregate, and resolution behaves like the
-verifiable mechanism. The two then break differently. Under \textbf{A1}, because reports are
-cumulative, each agent's error is not averaged away but random-walks into the terminal
-reference, so the gap climbs steadily (to $0.42$ at $\sigma=3$) and accuracy falls from
-$0.71$ to $0.53$. Under \textbf{A2}, a wrong common prior injects a constant log-odds bias
-the additive mechanism never corrects; the gap grows roughly linearly (to $0.42$ at $d=3$)
-and accuracy collapses toward chance ($0.51$) once the prior overrides the weak signals.
-Neither violation is catastrophic near the baseline, so the mechanism degrades
-\emph{gracefully}, but neither self-corrects, which is the standing cost of assuming them.
+This is an aggregation measure (gap and accuracy), not a statement about payouts, which is
+RQ2's question. Both knobs recover the assumption at their baseline: at $\sigma=0$ (A1) and
+$d=0$ (A2) the gap is exactly $0$ and the reference equals the ideal aggregate. The two then
+break differently. Under \textbf{A1} (each agent adds zero-mean log-odds noise $\sigma$ to its
+truthful report), in this cumulative reporting model an agent's error is not averaged away but
+random-walks into the terminal reference, so the gap climbs steadily (to $0.42$ at $\sigma=3$)
+and accuracy falls from $0.70$ to $0.53$. Under \textbf{A2}, the market shares a single common
+prior that is simply wrong (a logit gap $d$ from the data-generating prior), injecting a
+constant log-odds bias the additive mechanism never corrects; here the \emph{gap} grows
+monotonically (to $0.42$ at $d=3$) but \emph{accuracy} is non-monotonic, flat near the baseline
+(even edging up to $0.72$ around $d=0.5$) before collapsing toward chance ($0.51$) once the
+prior overrides the weak signals. Neither violation is catastrophic near the baseline, so the
+mechanism degrades \emph{gracefully}, but neither self-corrects, which is the standing cost of
+assuming them.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.9\linewidth]{Images/exp_assumptions.png}
     \caption[Single-assumption stress tests (A1, A2)]{\textbf{Breaking A1 and A2.} Gap
     between the terminal reference and the ideal full-information posterior (red, left axis)
-    and market accuracy (blue, right axis) as each assumption is violated, all else fixed.
-    Left: bounded rationality (per-agent log-odds noise $\sigma$). Right: a mis-specified
-    common prior (logit-disagreement $d$). Both are $0$-gap at the baseline ($\sigma=0$,
-    $d=0$) and degrade monotonically.}
+    and market accuracy (blue, right axis) as each assumption is violated, all else fixed
+    ($N=8$ agents, signal quality $q=0.6$, prior $0.5$, $8000$ runs per point). Left: bounded
+    rationality (per-agent log-odds noise $\sigma$). Right: a shared but mis-specified common
+    prior (logit gap $d$ to the data-generating prior). The gap is $0$ at the baseline
+    ($\sigma=0$, $d=0$) and grows monotonically; accuracy is flat near the baseline and then
+    falls (for A2 it is non-monotonic).}
     \label{fig:assumptions}
 \end{figure}
 

@@ -5,23 +5,18 @@
 % Importing document settings from our file "packages.sty"
 \usepackage{packages}
 
-% Beginning of document
 \begin{document}
 
 % Inserting title page
 \import{./}{title}
 
-% Defining front matter settings
+% Front matter (roman page numbers; not counted toward the body page budget)
 \frontmatter
-
-% Inserting table of contents
 \tableofcontents
-
-% Inserting list of figures & list of tables
 \listoffigures
 \listoftables
 
-% Defining main matter settings
+% Main matter (arabic page numbers start here)
 \mainmatter
 
 \input{Sections/abstract}
@@ -42,5 +37,4 @@
 \newpage
 \printbibliography[heading = bibintoc, title = Bibliography]
 
-% End of document
 \end{document}

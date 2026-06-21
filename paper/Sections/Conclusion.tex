@@ -1,80 +1,33 @@
 \section{Conclusion, Discussion, and Limitations}
 \label{sec:conclusion}
 
-\subsection{Summary}
+We gave empirical content to the self-resolving prediction market of
+\textcite{srinivasan2025selfresolving}. In a synthetic world where its assumptions hold
+(RQ1), a freely deviating agent's profit-maximising report converges onto truthful
+reporting as the reference accumulates informational substitutes ($\gamma^\star\to 1$ by
+$k\approx 64$), operationalising Theorems~1--3; we also reproduced the analytic $k_{\min}$
+bound and confirmed exact aggregation under truthful play. On roughly $90$ resolved
+Polymarket markets (RQ2) the self-resolving payouts track the verifiable payouts almost
+perfectly at a late reference and degrade gracefully as it moves earlier, isolating outcome
+leakage as the residual channel.
 
-This project gave empirical content to the self-resolving prediction market of
-\textcite{srinivasan2025selfresolving}, a mechanism that elicits and aggregates beliefs
-about an \emph{unverifiable} outcome by paying agents the cross-entropy of their report
-against a late reference agent rather than against the truth. We reproduced the
-mechanism in an open-source agent-based simulator and evaluated it along two axes. In
-the clean synthetic world (RQ1), a freely deviating agent's profit-maximising
-report converges onto truthful reporting as the reference accumulates informational
-substitutes ($\gamma^\star \to 1$ by $k \approx 64$), operationalising the paper's
-Theorems~1--3; we also reproduced the analytic minimum-substitutes bound $k_{\min}$ and
-confirmed exact aggregation under truthful play. On real Polymarket data (RQ2), the
-self-resolving payouts track the verifiable payouts they replace almost perfectly at a
-genuinely late reference (Pearson $\approx 1.00$, payout ratio $\approx 0.95$), and
-degrade gracefully as the reference moves earlier, isolating outcome leakage as the
-channel driving the residual gap.
+The two studies answer genuinely different questions (RQ1 about \emph{incentives} where
+the assumptions hold, RQ2 about \emph{outputs} where they fail) and together suggest the
+mechanism is more robust in practice than its worst-case theory promises (truthfulness
+onsets at $k\approx 64$, well inside the $k_{\min}\approx 146$ bound). Notably, RQ2's
+residual error lives almost entirely in the \emph{ranking} of who deserves reward, not in
+payout \emph{levels}: a designer can recover the right total spend and reward roughly the
+right behaviour at an early reference, but not the fine-grained ordering without leaking the
+outcome.
 
-\subsection{Discussion}
-
-The two studies answer two genuinely different questions, and it is worth being precise
-about which is which. RQ1 is about \emph{incentives}: in a world where the paper's
-assumptions hold, a rational agent who is free to lie chooses not to, once the reference
-is informed enough. RQ2 is about \emph{outputs}: on real data where the assumptions fail,
-the payouts the mechanism produces still resemble the payouts an outcome-based mechanism
-would have produced. Neither subsumes the other --- RQ2 is not an incentive test, and RQ1
-is not a test on real behaviour --- but together they bracket the mechanism from both
-sides and suggest it is more robust in practice than its worst-case theory promises (the
-empirical onset of truthfulness at $k\approx 64$ is well inside the $k_{\min}\approx 146$
-worst-case bound).
-
-The most interesting tension the empirical study surfaces is that the mechanism's
-residual error lives almost entirely in the \emph{ranking} of who deserves the most
-reward, not in the payout \emph{levels}. A self-resolving designer can recover roughly
-the right total spend and reward roughly the right behaviour at an early, forecast-only
-reference; what they cannot fully recover without leaking the outcome is the fine-grained
-ordering of which trader moved the price toward truth. This points directly at a design
-question: can the mechanism be adjusted so that the ranking better matches who actually
-moved the price toward truth, without needing the outcome?
-
-\subsection{Limitations}
-
-Several limitations qualify these results and frame future work.
-\begin{itemize}
-    \item \textbf{RQ2 measures outputs, not incentives.} We replay fixed historical
-    price paths and never let agents deviate; the empirical study therefore says nothing
-    about whether real traders would report truthfully under the live mechanism. A live
-    or agent-in-the-loop deployment would be needed for that.
-    \item \textbf{Broken assumptions on real data.} Real markets violate essentially all
-    of A1--A5: traders are not risk-neutral Bayesians, there is no common prior, and price
-    moves are serially correlated (herding, momentum, shared news) rather than
-    conditionally independent given $Y$. The agreement we observe is thus evidence of
-    \emph{robustness}, not of the assumptions holding.
-    \item \textbf{The reference conflates two things.} A late reference price is both
-    better-informed and outcome-contaminated; our sweeps separate these channels only
-    indirectly, by varying lateness. A cleaner instrument for ``well-informed but not
-    omniscient'' would strengthen the claim.
-    \item \textbf{Scope of the synthetic model.} The simulator deliberately makes A1--A4
-    hold by construction and only varies A5. This is the right design for isolating the
-    core incentive claim, but it cannot speak to how the mechanism behaves when, say,
-    conditional independence is mildly violated --- a natural next experiment.
-    \item \textbf{Binary outcomes only.} Both the mechanism as implemented and our
-    studies are restricted to binary $Y$. Multi-outcome and continuous predictions are
-    left for future work.
-\end{itemize}
-
-\subsection{Future work}
-
-Two directions follow directly from the limitations. First, a \emph{mechanism-design}
-question: can the CE-MSR be reweighted or the reference reconstructed so that the
-\emph{ranking} of rewards tracks who pushed the price toward truth, closing the gap that
-RQ2 attributes to leakage --- without observing the outcome? Second, a \emph{generality}
-question: extending the simulator and the empirical replay to non-binary outcomes, and
-to information structures that depart from strict conditional independence, would test how
-far the reference-as-proxy idea stretches beyond the regime where it is provably
-truthful. More broadly, the gap between the loose worst-case $k_{\min}$ and the much
-earlier empirical onset of truthfulness suggests there is room for tighter,
-prior-dependent guarantees that better match observed behaviour.
+\paragraph{Limitations and future work.}
+RQ2 measures outputs, not incentives (we replay fixed paths and never let agents deviate),
+and real markets violate essentially all of A1--A5, so the agreement is evidence of
+\emph{robustness}, not of the assumptions holding. The late reference also conflates
+``well-informed'' with ``outcome-contaminated''; the synthetic model fixes A1--A4 and varies
+only A5; and everything is restricted to binary outcomes. Two directions follow: can the
+CE-MSR be reweighted so the \emph{ranking} of rewards tracks who pushed price toward truth
+\emph{without} observing the outcome, and does the reference-as-proxy idea extend to
+non-binary outcomes and to mild violations of conditional independence? The gap between the
+loose $k_{\min}$ and the much earlier empirical onset also suggests room for tighter,
+prior-dependent guarantees.

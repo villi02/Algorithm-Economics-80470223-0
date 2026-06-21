@@ -1,117 +1,63 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\subsection{Background: forecasting things that never resolve}
+Prediction markets are among the most effective practical tools for aggregating
+dispersed information: by letting people bet on an event and paying them once the truth
+is revealed, they produce forecasts competitive with polls and expert
+panels~\parencite{berg2008results}. The engine underneath is a \emph{proper scoring
+rule}, which makes honest reporting reward-maximising, provided the outcome is
+eventually observed~\parencite{brier1950verification,good1952rational,gneiting2007strictly}.
+But many questions decision-makers care about are \emph{unverifiable}: the causal effect
+of a policy that was actually enacted, whether a piece of content is misinformation, the
+long-run consequence of a choice. For these there is no future observation to pay
+against, and the standard prediction-market lever is missing.
 
-Prediction markets are one of the most successful practical tools for aggregating
-dispersed information. By letting people bet on the outcome of an event and paying
-them once the truth is revealed, markets such as the Iowa Electronic Markets and,
-more recently, Polymarket~\parencite{polymarket} produce forecasts that are
-routinely competitive with polls and expert panels~\parencite{berg2008results}.
-The engine underneath is a \emph{proper scoring rule}: a payment scheme that makes
-honestly reporting one's true belief the reward-maximising action, provided the
-outcome is eventually observed~\parencite{brier1950verification,good1952rational,gneiting2007strictly}.
+Two literatures speak to this but neither closes it. Aumann's agreement theorem and its
+descendants~\parencite{aumann1976agreeing,kong2022aggregation} show that rational
+Bayesians who share a prior and exchange beliefs must agree, and, when their signals
+are informational substitutes~\parencite{chen2016informational}, that consensus
+aggregates all of their private information; but this assumes honesty and provides no
+\emph{incentive} to reveal a privately held signal. The information-elicitation-without-verification
+literature (peer prediction~\parencite{miller2005eliciting}, the Bayesian truth
+serum~\parencite{prelec2004bayesian}, output agreement~\parencite{waggoner2014output})
+provides incentives without an outcome, but it targets \emph{elicitation} from a few
+agents rather than efficient \emph{aggregation}, and is fragile to uninformative
+equilibria. The gap is a single mechanism that elicits truthful beliefs, aggregates
+them, and needs no outcome.
 
-The catch is the phrase ``provided the outcome is eventually observed''. Many of the
-questions decision-makers care about most are \emph{unverifiable}: the ground truth
-is hard, expensive, or simply impossible to access. What was the causal effect of a
-policy that was actually enacted, relative to the counterfactual that was not? Is a
-given piece of online content genuinely misinformation? What will the long-run
-social consequence of a choice be? In each case people must still pool scattered
-information and commit to a ``best guess'', yet there is no future observation to
-pay against. The standard prediction-market lever is missing.
+\textcite{srinivasan2025selfresolving} close this gap with a \emph{self-resolving}
+prediction market. Agents report sequentially; after each report the market terminates
+with probability $\alpha$; and instead of paying against the outcome, the mechanism pays
+each agent the cross-entropy of their report against the final (\emph{reference}) agent,
+who has seen the whole history. The key insight is one of \emph{informational smallness}:
+a reference with enough conditionally independent signals cannot be meaningfully moved by
+any single earlier agent, so it behaves like a noisy but unbiased proxy for the ground
+truth, and paying against this proxy recovers truthful incentives without ever
+observing the outcome. The authors prove that truthful reporting is a strict perfect
+Bayesian equilibrium under a standard set of assumptions.
 
-\subsection{Context: previous approaches}
+These guarantees are, however, entirely theoretical: the mechanism is never simulated or
+run on data. This paper supplies that evaluation through two questions. \textbf{RQ1
+(incentives, simulation):} in a synthetic world where the assumptions hold by
+construction, we estimate a focal agent's profit-maximising deviation by Monte Carlo and
+find it converges to truthful reporting as the reference's number of informational
+substitutes $k$ grows (exactly truthful by $k\approx 64$), operationalising the
+paper's main theorems. \textbf{RQ2 (robustness, empirical):} on roughly $90$ resolved
+Polymarket markets we pay each price path both self-resolvingly (against a late reference
+price) and verifiably (against the realised outcome), and find the two agree almost
+perfectly at a genuinely late reference (Pearson $\approx 1.00$, payout ratio
+$\approx 0.95$) and degrade gracefully as the reference is moved earlier, tracing out
+the outcome-leakage channel the mechanism depends on.
 
-Two research traditions speak to this problem but neither solves it cleanly. The
-first is \emph{Aumann's agreement theorem} and its descendants~\parencite{aumann1976agreeing,kong2022aggregation}:
-rational Bayesians who share a common prior and repeatedly exchange beliefs must
-eventually agree, and --- when their signals are informational
-substitutes~\parencite{chen2016informational} --- that consensus aggregates all of
-their private information. This machinery aggregates beliefs but assumes agents
-\emph{report honestly}; it provides no \emph{incentive} to reveal a privately held
-signal. The second tradition is \emph{information elicitation without verification},
-which includes peer prediction~\parencite{miller2005eliciting}, the Bayesian truth
-serum~\parencite{prelec2004bayesian}, and output-agreement
-mechanisms~\parencite{waggoner2014output}. These provide incentives without an
-outcome, but they typically target \emph{elicitation} from a few agents rather than
-efficient \emph{aggregation} from a large pool, and many of them admit
-uninformative equilibria in which everyone reports the same uninformative thing.
-
-\subsection{The problem: the gap}
-
-There is therefore a gap between these literatures. \emph{However}, the agreement
-literature aggregates information but does not incentivise truthful revelation.
-\emph{Despite} the elicitation literature providing incentives without ground
-truth, it does not aggregate efficiently and is fragile to uninformative equilibria.
-What is missing is a single mechanism that simultaneously (i) elicits truthful
-private beliefs, (ii) aggregates them into one consensus forecast, and (iii)
-requires \emph{no} access to the outcome --- all under roughly the same assumptions
-that make ordinary prediction markets work.
-
-\subsection{The solution: a well-informed reference replaces the outcome}
-
-\textcite{srinivasan2025selfresolving} close this gap with a
-\emph{self-resolving prediction market}. Agents report sequentially; after each
-report the market terminates with probability $\alpha$; and instead of paying agents
-against the outcome, the mechanism pays them the cross-entropy of their report
-against the \emph{final (reference) agent}, who --- having observed the full market
-history --- is the best-informed participant. The key insight is one of
-\emph{informational smallness}: if the reference agent has access to enough
-conditionally independent signals (``informational substitutes''), then no single
-earlier agent can meaningfully move the reference's posterior, so the reference
-behaves like a noisy but unbiased proxy for the ground truth. Paying against this
-proxy recovers the truthful incentives of a standard market \emph{without ever
-observing the outcome}.
-
-\subsection{The proof: summary of the evaluation}
-
-The original paper establishes that truthful reporting is a strict perfect Bayesian
-equilibrium under a standard set of assumptions, but it offers no empirical
-evaluation: the mechanism is never simulated and never run on data. This paper
-supplies that missing evaluation. We build an agent-based simulator in which the
-paper's assumptions hold by construction, and we ask two questions. \textbf{RQ1
-(incentives, simulation):} under strategic deviation, when is truthful reporting
-actually a best response, and how does this depend on how well-informed the
-reference is? We find that a focal agent's profit-maximising deviation
-$\gamma^\star$ converges to the truthful value $1$ as the reference's number of
-informational substitutes $k$ grows --- pegged at gross over-reporting for $k \le 8$,
-$\gamma^\star \approx 1.2$ at $k = 32$, and exactly $1.0$ for $k \ge 64$ ---
-operationalising the paper's Theorems~1--3. \textbf{RQ2 (robustness, empirical):}
-on roughly $90$ resolved Polymarket markets we pay each price path both
-self-resolvingly (against a late reference price) and verifiably (against the
-realised outcome), and find that the two schemes agree almost perfectly at a
-genuinely late reference (Pearson $\approx 1.00$, payout ratio $\approx 0.95$) and
-degrade gracefully as the reference is moved earlier --- exactly tracing out the
-outcome-leakage channel the mechanism depends on.
-
-\subsection{Contributions}
-
-Concretely, this project contributes:
-\begin{enumerate}
-    \item \textbf{An open-source agent-based simulator} (\texttt{srpm}) of the
-    self-resolving prediction market, with configurable agents, signal structures,
-    scoring rules, and strategies, in which the paper's rationality, common-prior,
-    distinct-signal, and conditional-independence assumptions hold by construction
-    (Section~\ref{sec:methods}).
-    \item \textbf{An incentive (best-response) study (RQ1)} that estimates a focal
-    agent's profit-maximising deviation by Monte Carlo and shows it converges to
-    truthful reporting as the reference's informational substitutes grow, together
-    with an exact reproduction of the paper's analytic minimum-substitutes bound
-    $k_{\min}$ (Sections~\ref{sec:methods}--\ref{sec:experiments}).
-    \item \textbf{Supporting synthetic studies} confirming that under truthful play
-    the market reproduces the full-information Bayesian posterior to machine
-    precision, that a few near-oracle references pin the aggregate, and that the
-    mechanism pays almost nothing in uninformative equilibria
-    (Section~\ref{sec:experiments}).
-    \item \textbf{A counterfactual empirical study (RQ2)} on real resolved
-    Polymarket data that quantifies how closely self-resolving payouts track the
-    verifiable payouts they are meant to replace, and isolates outcome leakage as
-    the mechanism behind the residual gap (Section~\ref{sec:experiments}).
-\end{enumerate}
-
-The remainder of the paper is organised as follows. Section~\ref{sec:related}
-reviews related work; Section~\ref{sec:preliminaries} sets up the model, the
-mechanism, and its assumptions; Section~\ref{sec:methods} describes our simulator
-and experimental design; Section~\ref{sec:experiments} presents the results; and
-Section~\ref{sec:conclusion} discusses limitations and concludes.
+Concretely, we contribute: (i) an open-source agent-based simulator of the mechanism in
+which the rationality, common-prior, distinct-signal, and conditional-independence
+assumptions hold by construction; (ii) the incentive study (RQ1), together with an exact
+reproduction of the paper's analytic minimum-substitutes bound $k_{\min}$; (iii)
+supporting synthetic studies confirming exact aggregation under truthful play, the value
+of a few near-oracle references, and near-zero pay in uninformative equilibria; and (iv)
+the counterfactual empirical study (RQ2) quantifying how closely self-resolving payouts
+track the verifiable payouts they replace, isolating outcome leakage as the residual gap.
+Section~\ref{sec:related} reviews related work; Section~\ref{sec:preliminaries} sets up
+the model and mechanism; Section~\ref{sec:methods} describes our methods;
+Section~\ref{sec:experiments} presents the results; and Section~\ref{sec:conclusion}
+concludes.

@@ -24,6 +24,7 @@ from .beliefs import (
     sigmoid,
 )
 from .incentives import expected_payoff_vs_gamma, optimal_gamma
+from .kmin import d_hat, epsilon_prime, k_min, k_min_curve
 from .market import MarketConfig, MarketResult, SelfResolvingMarket
 from .metrics import (
     AggregationStats,
@@ -98,4 +99,8 @@ __all__ = [
     "full_information_posterior",
     "expected_payoff_vs_gamma",
     "optimal_gamma",
+    "d_hat",
+    "epsilon_prime",
+    "k_min",
+    "k_min_curve",
 ]

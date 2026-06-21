@@ -1,0 +1,30 @@
+\begin{abstract}
+\noindent
+Prediction markets aggregate dispersed beliefs into a single forecast, but their
+incentives normally rely on a verifiable outcome: agents are eventually paid based
+on what actually happened. Many decisions of interest --- the causal effect of a
+policy, whether a piece of content violates a rule, the long-run consequence of a
+choice --- never resolve cleanly, so this lever is unavailable. \textcite{srinivasan2025selfresolving}
+propose a \emph{self-resolving} prediction market that removes the outcome
+entirely: agents report sequentially, the market stops at a random time, and every
+agent is paid the cross-entropy of their report against a late \emph{reference}
+agent rather than against the truth. Their key insight is that a reference with
+access to enough conditionally independent signals becomes a good proxy for the
+ground truth, which makes truthful reporting a (strict) perfect Bayesian
+equilibrium. Their guarantees are, however, entirely theoretical. This paper
+reproduces the mechanism in an open-source agent-based simulator and stress-tests
+it along two axes. First, in a clean synthetic world where the paper's assumptions
+hold by construction, we estimate a focal agent's profit-maximising deviation by
+Monte Carlo and confirm that the best response converges to truthful reporting as
+the reference's number of informational substitutes $k$ grows ($\gamma^\star \to 1$
+by $k \approx 64$), operationalising the paper's main theorems; we also reproduce
+the analytic minimum-substitutes bound $k_{\min}$. Second, we run a counterfactual
+study on roughly $90$ resolved Polymarket markets, treating each price path as a
+stream of reports and paying it both ways --- self-resolving (against a late
+reference price) and verifiable (against the realised outcome). The two payment
+schemes agree almost perfectly when the reference is genuinely late (Pearson
+$\approx 1.00$, payout ratio $\approx 0.95$) and degrade gracefully as the reference
+is moved earlier, isolating the outcome-leakage channel that the reference relies
+on. Together the results give empirical content to a purely theoretical mechanism
+and map out where reference-based resolution succeeds and where it breaks.
+\end{abstract}

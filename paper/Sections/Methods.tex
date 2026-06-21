@@ -1,0 +1,158 @@
+\section{Methods}
+\label{sec:methods}
+
+We evaluate the mechanism with two complementary instruments: an agent-based
+simulator in which the paper's assumptions hold by construction (RQ1 and supporting
+studies), and a counterfactual replay of real Polymarket price paths (RQ2). Both are
+implemented in a single Python package, \texttt{srpm}, and all figures and tables in
+Section~\ref{sec:experiments} are produced by the scripts described here.
+
+\subsection{An agent-based simulator of the mechanism}
+\label{subsec:simulator}
+
+The simulator instantiates the model of Section~\ref{sec:preliminaries} directly.
+Its components are:
+\begin{itemize}
+    \item \textbf{Signals.} A \texttt{SignalStructure} is a conditional probability
+    table $\mathbb{P}(X \mid Y)$. The two we use are \texttt{binary\_symmetric}$(q)$,
+    a signal correct with probability $q$, and \texttt{ground\_truth}$(\rho)$, a
+    near-oracle that reveals $Y$ with reliability $\rho$. Signal quality $q$ (or
+    equivalently $\delta$) is the dial for Assumption~A5.
+    \item \textbf{Beliefs.} Because signals are conditionally independent given $Y$
+    (A4), posterior log-odds are \emph{additive}: a truthful Bayesian inverts the
+    previous report into its log-odds and adds its own signal's log-likelihood ratio
+    $\ell$. This is the computational heart of the simulator and is what makes exact
+    aggregation possible.
+    \item \textbf{Strategies.} A \texttt{Strategy} maps an agent's context (prior,
+    previous report, own signal, history) to a report. The truthful strategy reports
+    the Bayesian posterior; the family we use to model deviation is
+    \texttt{ScaledSignal}$(\gamma)$, which reports
+    $\mathrm{logit}(\pi) + \gamma\,\ell$, so $\gamma = 1$ is truthful and $\gamma > 1$
+    is over-confident. Additional strategies (herding, noisy, constant, contrarian)
+    are used in the population study.
+    \item \textbf{Scoring rules.} \texttt{CrossEntropyMSR} implements
+    \eqref{eq:cemsr}; outcome-based benchmarks (\texttt{OutcomeLogMSR}) are available
+    for validation and are used in the empirical study.
+    \item \textbf{Market.} \texttt{SelfResolvingMarket} runs agents in sequence,
+    terminates with probability $\alpha$ (or after a fixed count when $\alpha=0$),
+    designates the terminal agent as the reference, and applies the CE-MSR to the
+    first $T-k$ agents and the flat fee $R$ to the last $k$.
+\end{itemize}
+By construction the simulator satisfies A1 (agents are Bayesian; a deviator deviates
+\emph{within} that rational frame via $\gamma$), A2 (one common prior generates every
+signal), and A3--A4 (distinct, conditionally independent signals). The only
+assumption we deliberately vary is A5 --- how informative signals are, and how many of
+them the reference sees. This is what makes the simulator a clean test of the
+mechanism's \emph{core} incentive claim rather than a test of the modelling
+assumptions themselves.
+
+\subsection{RQ1: estimating the profit-maximising deviation}
+\label{subsec:rq1method}
+
+RQ1 asks whether a freely deviating agent prefers to report truthfully, and how that
+depends on the reference's information. We isolate a single \emph{focal} agent with
+signal quality $q_t = 0.7$ and let it consider the deviation family
+\texttt{ScaledSignal}$(\gamma)$ over a grid $\gamma \in [0,3]$ ($61$ points). The
+reference observes the focal agent's report \emph{plus} $k$ additional independent
+signals, each of quality $q_r = 0.65$; these are the reference's informational
+substitutes. We sweep
+\[
+    k \in \{0, 2, 8, 32, 64, 128, 256\},
+\]
+and for each $(k,\gamma)$ estimate the focal agent's expected CE-MSR payoff by Monte
+Carlo with $N = 4\times 10^5$ samples (prior $\pi = 0.5$). For each $k$ we report the
+profit-maximising deviation $\gamma^\star(k) = \arg\max_\gamma \mathbb{E}[\text{payoff}]$.
+
+This is the direct operationalisation of Theorem~3: the gain from deviating is bounded
+by $\hat D_\eta(\Delta, \mathbf{y})$, and $\Delta \to 0$ as $k$ grows, so the
+profit-maximising $\gamma^\star$ should fall from ``over-report as much as possible''
+toward the truthful value $1$. The deviation parameter $\gamma$ is simply how we
+\emph{realise} a deviation; $\gamma^\star \to 1$ is the theoretical bound biting.
+
+\subsection{Reproducing the analytic bound $k_{\min}$}
+\label{subsec:kmin}
+
+To connect the Monte Carlo result to the paper's closed-form theory, we also reproduce
+the analytic minimum-substitutes bound of \textcite{srinivasan2025selfresolving}
+(their Figure~2): the smallest number of substitutes $k$ the reference needs so that a
+focal agent's gain from deviating under the CE-MSR is at most $\varepsilon$. The
+computation chains three of the paper's results: Theorem~1 (Eq.~3) bounds the
+adjustment $|\Delta|$ as a function of $k$; Theorem~5 (Eq.~9) bounds the misreport
+gain $\hat D_\eta(\Delta, y)$ as a function of $\Delta$ and the market prior $y$; and
+Remark~3 inverts these numerically --- because $\hat D_\eta(\Delta, y) = \varepsilon$ is
+transcendental, we solve $\varepsilon' = \min\{|\Delta| : \hat D_\eta(\Delta, y) = \varepsilon\}$
+by bisection (in a log-transformed variable, so roots sitting $e^{-100}$ from the pole
+are still resolved) and substitute back into the Theorem~1 bound to obtain
+\[
+    k_{\min}(\delta, \eta, \varepsilon, y_1)
+    = \frac{1}{-\log(1-\delta)} \,
+      \log\!\left(\frac{(1-\eta)/\eta - \eta/(1-\eta)}{4\,\varepsilon'}\right).
+\]
+We evaluate $k_{\min}$ across a grid of market priors $y_1$ for representative
+$(\delta, \eta, \varepsilon)$, recovering the shape of the paper's analytic curve and
+giving a theory-side reference point for the empirical onset of truthfulness seen in
+RQ1.
+
+\subsection{Supporting synthetic studies}
+\label{subsec:supporting}
+
+Three further studies probe the mechanism's aggregation behaviour rather than its
+incentives:
+\begin{itemize}
+    \item \textbf{Aggregation.} Sweep the number of truthful agents and the signal
+    quality $q$, and measure market accuracy, Brier score, and the \emph{gap} between
+    the terminal report and the ideal full-information Bayesian posterior. This checks
+    the paper's claim that, under truthful play, the market exactly aggregates.
+    \item \textbf{Value of an informed reference.} Vary the fraction of near-oracle
+    agents (reliability $0.99$) in a $12$-agent market, and separately the quality of
+    a \emph{single} informed agent, to see how much oracle access the aggregate needs.
+    \item \textbf{Mixed / strategic populations.} Compare an all-truthful population
+    against populations seeded with herders, noisy reporters, an uninformative third,
+    and over-reporters, measuring accuracy, gap to full information, and the designer's
+    total cost. The cost in the uninformative population is the empirical check on the
+    paper's ``pays zero in uninformative equilibria'' claim.
+\end{itemize}
+
+\subsection{RQ2: a counterfactual on real Polymarket data}
+\label{subsec:rq2method}
+
+RQ2 leaves the synthetic world entirely. We download roughly $90$ \emph{resolved}
+Polymarket markets~\parencite{polymarket} with trading volume above \$100k via the
+Gamma and CLOB APIs (responses cached on disk for reproducibility). For each market we
+treat the Yes-price time series as a stream of sequential reports: a price $p_t$ is the
+report $\mathbf{q}^{(t)} = [\,1-p_t,\, p_t\,]$, and each price \emph{change} is one
+``reporter'' (flat repeats are dropped). We then pay every transition \emph{two ways on
+the identical set of transitions}:
+\begin{itemize}
+    \item \textbf{self-resolving:} CE-MSR \eqref{eq:cemsr} against a late
+    \emph{reference price} $\mathbf{r}$ --- no outcome used;
+    \item \textbf{verifiable:} log market scoring rule against the realised outcome $Y$.
+\end{itemize}
+Because the late reference price plays the role of the paper's terminal agent, the
+choice of ``how late'' is the crucial knob, and it mixes two channels: a late price is
+both \emph{better informed} and \emph{contaminated by outcome leakage} (near
+resolution the question is almost settled). We therefore sweep several references:
+\texttt{lead\_1h}, \texttt{lead\_24h}, \texttt{lead\_168h} (1h/1d/1w before the last
+data point), \texttt{life\_50pct} (the price halfway through the market's life), and
+\texttt{window\_1-24h} (the variance-reducing \emph{average} of a late window). To
+compare markets of very different durations on a common axis we additionally sweep the
+reference by \emph{relative} time, from $90\%$ before close (very early) to $1\%$
+before close (near resolution).
+
+For each market and reference we compute: the Pearson and Spearman correlation of
+per-reporter payouts between the two schemes (do the \emph{amounts} agree, and does the
+\emph{ranking} of who earns most agree?), the Jaccard overlap of the top-decile
+earners, the ratio of total designer payout, and whether the single most-rewarded
+reporter matches. We aggregate as medians across markets and also break results down
+by a reproducible keyword topic classifier (politics / sports / economy / tech / …),
+since Polymarket's own category fields are mostly empty.
+
+\paragraph{What RQ2 does and does not measure.}
+This design measures whether the self-resolving mechanism's \emph{outputs} (its
+payouts) track the verifiable mechanism's outputs on real data. It is \emph{not} a test
+of incentive compatibility: real traders are not the rational Bayesians of A1, prices
+are serially correlated rather than conditionally independent (A4 fails), and we replay
+a fixed historical path rather than letting agents deviate. RQ2 is therefore a
+robustness test --- does reference-based resolution still reproduce ground-truth-based
+payouts when the assumptions behind it are broken? --- and is complementary to the
+incentive question that RQ1 answers in the clean world.

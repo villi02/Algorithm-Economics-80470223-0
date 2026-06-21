@@ -107,9 +107,81 @@ srpm/
   incentives.py   peer-prediction deviation analysis (Theorems 1-3)
 experiments/      four runnable studies, each writes figures + CSV to results/
 examples/         quickstart.py
+empirical/        real-Polymarket counterfactual study (reuses srpm.scoring)
+  polymarket.py     Gamma + CLOB API client with on-disk caching
+  references.py     reference-r strategies (lead / fraction / window) + sweep
+  categorize.py     keyword topic classifier (politics / sports / crypto / ...)
+  counterfactual.py per-market payout computation + summary metrics
+  plots.py          figures
+  run_empirical.py  CLI driver -> empirical/results/
 ```
 
-## The four bundled experiments
+## Empirical study on real Polymarket data (`empirical/`)
+
+The `empirical/` subpackage implements **Option 1** of the empirical plan: rather
+than simulate agents, it treats a *resolved* Polymarket market's price time series
+as a stream of sequential reports and asks **how closely the self-resolving
+mechanism's payouts would have tracked the verifiable (outcome-based) mechanism's
+payouts** on real data.
+
+For each market:
+
+- Each Yes-price `p_t` is a report `q^(t) = [1−p_t, p_t]`; a *reporting event* is a
+  price change (consecutive flat repeats are dropped).
+- A **reference `r`** is a *late* price (the empirical analogue of the paper's
+  terminal agent). "Late" mixes two channels, so we sweep several references:
+  - `lead_1h` — price ~1h before the last data point: an **upper bound** dominated
+    by *outcome leakage* (the question is nearly settled).
+  - `lead_24h` — a moderately late midpoint.
+  - `lead_168h` (1 week) and `life_50pct` (halfway through the market's life) —
+    well-informed but **not omniscient** forecasts, closest to the paper's spirit
+    and the most honest basis for the empirical claim.
+  - `window_1-24h` — the *average* of late prices, the variance-reducing
+    multi-reference design from the paper's Section 6.2.
+- Each reporter (price transition) is paid two ways on the **same** transitions:
+  - **self-resolving**: CE-MSR against `r` (`srpm.scoring.CrossEntropyMSR`) — no
+    outcome needed;
+  - **verifiable**: log-MSR against the realised `Y` (`srpm.scoring.OutcomeLogMSR`).
+- We compare the two: total payout to the designer, Pearson/Spearman correlation
+  of per-reporter payouts, top-decile reporter overlap, and whether the single
+  most-rewarded reporter matches.
+
+```bash
+cd prediction_market_sim
+pip install -r requirements.txt          # now also needs `requests`
+
+python empirical/run_empirical.py                       # ~200 top-volume markets
+python empirical/run_empirical.py --n 100 --min-volume 50000
+python empirical/run_empirical.py --category politics --refresh
+python empirical/run_empirical.py --help                # all knobs
+```
+
+Outputs land in `empirical/results/`:
+
+- `per_market.csv` — one row per market × reference (includes the inferred topic).
+- `reference_sweep.csv` — medians per reference across all markets.
+- `category_breakdown.csv` — medians per (topic, reference).
+- `fig_reference_sweep.png` — **the headline plot**: how agreement & the payout
+  ratio move as `r` gets earlier.
+- `fig_category_sweep.png` — the same, split by topic.
+- per-reference `fig_total_scatter_*`, `fig_pooled_*`, `fig_hist_*`.
+- `fig_example_*` — timeline panels for the most *illustrative* markets (price
+  genuinely travels through the middle, balanced across Yes/No outcomes).
+
+**Topics** are inferred by a small reproducible keyword classifier
+(`empirical/categorize.py`: politics / sports / crypto / economy / tech / …),
+because Gamma's own `category`/`tags` fields are empty for most markets. API
+responses are cached under `empirical/cache/` (git-ignored; delete to refresh).
+
+**How to read it.** As the reference moves from near-resolution (`lead_1h`) to
+well before it (`life_50pct`), agreement with the verifiable scheme falls — that
+gap *is* the outcome-leakage channel. What remains is how well a genuinely
+forecast-only reference reproduces ground-truth incentives. Frame the claim
+honestly: this measures whether the mechanism's **outputs track** the verifiable
+mechanism's, **not** incentive compatibility (which needs a live mechanism where
+agents can deviate).
+
+## The four bundled (synthetic) experiments
 
 1. **`exp_aggregation.py`** — market accuracy and gap to the ideal Bayesian posterior
    vs number of agents and signal quality. Confirms exact aggregation under truthful play.
